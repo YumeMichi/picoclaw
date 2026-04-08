@@ -2,6 +2,7 @@
 
 # Build variables
 BINARY_NAME=picoclaw
+LAUNCHER_BINARY_NAME=picoclaw-launcher
 BUILD_DIR=build
 CMD_DIR=cmd/$(BINARY_NAME)
 MAIN_GO=$(CMD_DIR)/main.go
@@ -335,21 +336,25 @@ build-all: generate
 
 ## install: Install picoclaw to system and copy builtin skills
 install: build
-	@echo "Installing $(BINARY_NAME)..."
+	@echo "Installing $(BINARY_NAME), $(LAUNCHER_BINARY_NAME)..."
 	@mkdir -p $(INSTALL_BIN_DIR)
 	# Copy binary with temporary suffix to ensure atomic update
 	@cp $(BUILD_DIR)/$(BINARY_NAME) $(INSTALL_BIN_DIR)/$(BINARY_NAME)$(INSTALL_TMP_SUFFIX)
+	@cp $(BUILD_DIR)/$(LAUNCHER_BINARY_NAME) $(INSTALL_BIN_DIR)/$(LAUNCHER_BINARY_NAME)$(INSTALL_TMP_SUFFIX)
 	@chmod +x $(INSTALL_BIN_DIR)/$(BINARY_NAME)$(INSTALL_TMP_SUFFIX)
+	@chmod +x $(INSTALL_BIN_DIR)/$(LAUNCHER_BINARY_NAME)$(INSTALL_TMP_SUFFIX)
 	@mv -f $(INSTALL_BIN_DIR)/$(BINARY_NAME)$(INSTALL_TMP_SUFFIX) $(INSTALL_BIN_DIR)/$(BINARY_NAME)
-	@echo "Installed binary to $(INSTALL_BIN_DIR)/$(BINARY_NAME)"
+	@mv -f $(INSTALL_BIN_DIR)/$(LAUNCHER_BINARY_NAME)$(INSTALL_TMP_SUFFIX) $(INSTALL_BIN_DIR)/$(LAUNCHER_BINARY_NAME)
+	@echo "Installed $(BINARY_NAME), $(LAUNCHER_BINARY_NAME) to $(INSTALL_BIN_DIR)"
 	@echo "Installation complete!"
 
 ## uninstall: Remove picoclaw from system
 uninstall:
-	@echo "Uninstalling $(BINARY_NAME)..."
+	@echo "Uninstalling $(BINARY_NAME), $(LAUNCHER_BINARY_NAME)..."
 	@rm -f $(INSTALL_BIN_DIR)/$(BINARY_NAME)
-	@echo "Removed binary from $(INSTALL_BIN_DIR)/$(BINARY_NAME)"
-	@echo "Note: Only the executable file has been deleted."
+	@rm -f $(INSTALL_BIN_DIR)/$(LAUNCHER_BINARY_NAME)
+	@echo "Removed $(BINARY_NAME), $(LAUNCHER_BINARY_NAME) from $(INSTALL_BIN_DIR)"
+	@echo "Note: Only the executable files have been deleted."
 	@echo "If you need to delete all configurations (config.json, workspace, etc.), run 'make uninstall-all'"
 
 ## uninstall-all: Remove picoclaw and all data
